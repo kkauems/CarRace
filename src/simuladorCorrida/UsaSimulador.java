@@ -1,8 +1,10 @@
 package simuladorCorrida;
 
+import java.awt.*;
+import java.awt.image.*;
+
 import javax.swing.JFrame;
 
-@SuppressWarnings("serial")
 public class UsaSimulador extends Canvas implements Runnable {
 	private final int size=700;
 	private static Simulador simulador;
@@ -17,19 +19,17 @@ public class UsaSimulador extends Canvas implements Runnable {
 		simulador.tick();
 	}
 	
-	private void render() {
+	private void render(){
 		BufferStrategy bs=this.getBufferStrategy();
 		if(bs==null) {
 			this.createBufferStrategy(3);
 			return;
 		}
-		Graphics g=bs.getDrawGraphics();
+		Graphics g = bs.getDrawGraphics();
 		g.setColor(Color.white);
 		g.fillRect(0,0, size, size);
 		simulador.render(g);
 		bs.show();
-		
-		
 	}
 
 	public static void main(String[] args) {

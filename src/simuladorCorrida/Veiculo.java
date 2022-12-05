@@ -1,69 +1,49 @@
 package simuladorCorrida;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.File;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+public abstract class Veiculo extends Rectangle{
 
-@SuppressWarnings("serial")
-public class Veiculo extends Rectangle implements Serializable{
     private int id;
-    private final int quantidadeRodas=4;
-    private boolean ipva;
-    private double gasolina=2.5;
-    private Roda roda[]=new Roda[quantidadeRodas];
-    private boolean mover=false;
-    private static BufferedImage image;
+    private final int quantidadeRodas = 4;
+    private Roda[] roda = new Roda[getQuantidadeRodas()];
+    private boolean mover = false;
+    private static BufferedImage image; 
     
     public Veiculo(int x,int y){
     	super(x,y,32,32);
     	generateId();
-    	ipvaPago();
         generateRoda();
         generateImage();
     }
-    private void ipvaPago(){
-        Random r=new Random();
-        ipva=r.nextBoolean();
-    }
    
     public void generateId(){
-        Random r=new Random();
-        id=r.nextInt(100)+1;
- 
+        Random r = new Random();
+        id = r.nextInt(100)+1;
     }
-    public static void generateImage() {
+    
+    public void generateRoda(){
+        for(int i=0;i<getQuantidadeRodas();i++){
+            roda[i] = new Roda();
+        }
+    }
+
+    public void generateImage() {
     	try {
-			image=ImageIO.read(Veiculo.class.getResource("/Carro.png"));
+            File f = new File("./Source/carroP.jpeg");
+            image = ImageIO.read(f);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
     }
-    
-    private void generateRoda(){
-        for(int i=0;i<quantidadeRodas;i++){
-            roda[i]=new Roda();
-        }
-    }
    
-    public void mover(){
-        int cont=0;
-        if(gasolina>0.55&&ipva==true){
-            for(int i=0;i<4;i++){
-                if(roda[i].getcalibragemPneu()){
-                   cont++;
-                }
-            }
-            if(cont==4){
-                mover=true;
-            }
-            if(mover==true){
-                gasolina-=0.55;
-            }
-        }
-    }
+    public abstract void mover();
     
     public void esvaziar(int id) {
     	roda[id].setcalibragemPneu(false);
@@ -72,50 +52,40 @@ public class Veiculo extends Rectangle implements Serializable{
     public void calibrar(int id){
     	roda[id].setcalibragemPneu(true);
     }
-    
+
+    public abstract int getMov();
     
     public int getId() {
     	return id;
     }
-    
-    public boolean getIPVA() {
-    	return ipva;
-    }
-    
-    public void setIPVA(boolean ipva){
-    	 this.ipva=ipva;
-    
-    }
-    
-    public void setGasolina(double gasolina) {
-    	this.gasolina=gasolina;
+
+    public Roda[] getRodas(){
+        return roda;
     }
     
     public int getQuantidadeRodas() {
-    	return quantidadeRodas;
+    	return this.quantidadeRodas;
+    }
+
+    public boolean getCalibragemRoda(int i){
+        return roda[i].getcalibragemPneu();
     }
 	
+    public BufferedImage getImage() {
+		return image;
+	}
+
     public boolean getMover() {
     	return mover;
     }
     
     public void setMover(boolean mover){
-    	this.mover=mover;
+    	this.mover = mover;
     }
-	
-    public static BufferedImage getImage() {
-		return image;
-	}
     
-	
-	@Override
 	public String toString() {
-		if(ipva) {
-		return "veiculo "+id+" percorreu "+x+"km, est� com o ipva pago, tem "+gasolina
-				+"l de gasolina, "+quantidadeRodas+" rodas, os pneus est�o: " +Arrays.toString(roda);
-		}
-		return "veiculo "+id+" percorreu "+x+"km, est� com o ipva  n�o pago, tem "+gasolina
-				+"l de gasolina, "+quantidadeRodas+" rodas, os pneus est�o: " +Arrays.toString(roda);
-		
+		return "O veiculo "+getId()+" percorreu "+x+"km, tem "+getQuantidadeRodas()+
+        " rodas e os pneus estao: " +Arrays.toString(getRodas())+".";
 	}
+
 }
